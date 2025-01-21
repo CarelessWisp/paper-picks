@@ -6,7 +6,7 @@ react native: https://reactnative.dev/docs/environment-setup
 Terminal commands to download and run project
 ```
 git clone https://github.com/CarelessWisp/paper-picks.git
-cd PaperPicks\
+cd PaperPicks
 npm expo start
 ```
 
