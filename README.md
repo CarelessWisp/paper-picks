@@ -1,9 +1,12 @@
 # paperpicks
-expo project
+expo and react native project: https://docs.expo.dev/ \
+react native: https://reactnative.dev/docs/environment-setup
 
 
-`
-git clone <url>\
+Terminal commands to download and run project
+```
+git clone https://github.com/CarelessWisp/paperpicks.git
 cd PaperPicks\
-npm run ios\
-`
+npm expo start
+```
+
