@@ -13,5 +13,5 @@ cd PaperPicks
 
 # running locally
 ```
-npm expo start
+npx expo start
 ```
