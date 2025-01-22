@@ -12,6 +12,7 @@ cd PaperPicks
 ```
 
 # running locally
+Downlaod node.js then run this
 ```
 npx expo start
 ```
