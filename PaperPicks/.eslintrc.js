@@ -4,5 +4,6 @@ module.exports = {
   rules: {
     'prettier/prettier': 'warn',
     'no-undef': 'warn',
+    quotes: ['error', 'single'],
   },
 };

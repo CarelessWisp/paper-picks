@@ -1,5 +1,5 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 
@@ -10,14 +10,15 @@ import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<
-    typeof FontAwesome
+    typeof FontAwesome6
   >['name'];
   color: string;
+  size?: number;
 }) {
   return (
-    <FontAwesome
-      size={28}
-      style={{ marginBottom: -3 }}
+    <FontAwesome6
+      size={25}
+      style={{ marginBottom: -1 }}
       {...props}
     />
   );
@@ -41,10 +42,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Home',
           tabBarIcon: ({ color }) => (
             <TabBarIcon
-              name="code"
+              name="house-chimney"
               color={color}
             />
           ),
@@ -52,9 +53,9 @@ export default function TabLayout() {
             <Link href="/modal" asChild>
               <Pressable>
                 {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
+                  <FontAwesome6
+                    name="circle-info"
+                    size={22}
                     color={
                       Colors[
                         colorScheme ?? 'light'
@@ -72,12 +73,50 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="betting"
         options={{
-          title: 'Tab Two',
+          title: 'Betting',
           tabBarIcon: ({ color }) => (
             <TabBarIcon
-              name="code"
+              name="coins"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="leaderboard"
+        options={{
+          title: 'Leaderboard',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon
+              name="ranking-star"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: 'History',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon
+              size={23}
+              name="landmark"
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Account',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon
+              size={25}
+              name="user-circle"
               color={color}
             />
           ),
