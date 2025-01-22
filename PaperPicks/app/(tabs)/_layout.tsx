@@ -30,6 +30,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: {
+          height: 70,
+          borderWidth: 2,
+          borderRadius: 60,
+        },
         tabBarActiveTintColor:
           Colors[colorScheme ?? 'light'].tint,
         // Disable the static render of the header on web
@@ -103,7 +108,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon
               size={23}
-              name="landmark"
+              name="clock-rotate-left"
               color={color}
             />
           ),
