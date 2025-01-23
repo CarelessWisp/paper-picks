@@ -3,7 +3,8 @@ import { StyleSheet } from 'react-native';
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 
-export default function TabTwoScreen() {
+// tab five (bottom right)
+export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>

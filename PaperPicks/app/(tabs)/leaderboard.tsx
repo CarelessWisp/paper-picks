@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
-
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 
-export default function TabTwoScreen() {
+// tab three screen (middle)
+export default function LeaderboardScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
