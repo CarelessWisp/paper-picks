@@ -1,10 +1,12 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import React from 'react';
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 
 // tab one screen (bottom left)
 export default function HomeScreen() {
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home</Text>
@@ -13,7 +15,7 @@ export default function HomeScreen() {
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
-      <EditScreenInfo path="app/(tabs)/home.tsx" />
+      <EditScreenInfo path="/home" />
     </View>
   );
 }
@@ -34,3 +36,4 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
+
