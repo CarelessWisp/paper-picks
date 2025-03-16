@@ -1,25 +1,40 @@
 // /app/index.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 
-// Test user credentials for login
-const testUser = { username: "Test", password: "12345" };
+
 
 const IndexPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>("");
+  const router = useRouter();
 
   // Handle login logic
-  const handleLogin = () => {
-    if (username === testUser.username && password === testUser.password) {
-      console.log("Login successful, navigating to HomeScreen");
-      Alert.alert("Login Successful", "Welcome!");
-      router.push("/home");  // Navigate to home page
-    } else {
-      console.log("Login failed");
-      setError("Invalid username or password");
+  const handleLogin = async () => {
+     
+    try {
+      const response = await fetch('http://localhost:5001/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        // Save the JWT token, for example, to AsyncStorage
+        console.log('Login successful:', data.token);
+        router.push('/home');
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Error logging in:', err);
+      setError('Server error. Please try again later.');
     }
   };
 

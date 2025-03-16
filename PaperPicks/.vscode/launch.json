@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Start Expo and Server",
+            "configurations": ["Start Expo", "Start Backend"]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Start Expo",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npx",
+            "runtimeArgs": ["expo", "start"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Start Backend",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/server.js",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        }
+    ]
+}
