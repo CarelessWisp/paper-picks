@@ -1,4 +1,10 @@
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  ScrollView,
+} from 'react-native';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,87 +23,130 @@ interface UserData {
 // tab five (bottom right)
 export default function ProfileScreen() {
   // Use the UserData interface to type the state
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [userData, setUserData] =
+    useState<UserData | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const username = await AsyncStorage.getItem('username');
+        const username =
+          await AsyncStorage.getItem('username');
 
         if (!username) {
           console.error('Username not found');
           return;
         }
 
-        const response = await fetch(`http://localhost:5001/userProfile?username=${username}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `http://localhost:5001/userProfile?username=${username}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
 
         if (response.ok) {
-          const data: UserData = await response.json();
-          setUserData(data);  // Store the fetched user data
+          const data: UserData =
+            await response.json();
+          setUserData(data); // Store the fetched user data
         } else {
-          console.error('Failed to fetch user profile');
+          console.error(
+            'Failed to fetch user profile',
+          );
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
+        console.error(
+          'Error fetching user profile:',
+          error,
+        );
       }
     };
 
-    fetchUserProfile();  // Fetch user profile when the component mounts
+    fetchUserProfile(); // Fetch user profile when the component mounts
   }, []);
 
   const handleLogout = () => {
-    router.push("/");  // Navigate to the login page or home page
+    router.push('/'); // Navigate to the login page or home page
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.separator} />
-  
+
       {userData ? (
         <View style={styles.profileCard}>
-          <Text style={styles.profileLabel}>Username</Text>
-          <Text style={styles.profileText}>{userData.username}</Text>
-  
-          <Text style={styles.profileLabel}>Email</Text>
-          <Text style={styles.profileText}>{userData.email}</Text>
-  
-          <Text style={styles.profileLabel}>Balance</Text>
-          <Text style={styles.profileText}>${userData.balance}</Text>
-  
-          <Text style={styles.profileLabel}>Amount Won</Text>
-          <Text style={styles.profileText}>${userData.amountWon}</Text>
-  
-          <Text style={styles.profileLabel}>Amount Lost</Text>
-          <Text style={styles.profileText}>${userData.amountLost}</Text>
-  
-          <Text style={styles.profileLabel}>Wins</Text>
-          <Text style={styles.profileText}>{userData.wins}</Text>
-  
-          <Text style={styles.profileLabel}>Losses</Text>
-          <Text style={styles.profileText}>{userData.losses}</Text>
+          <Text style={styles.profileLabel}>
+            Username
+          </Text>
+          <Text style={styles.profileText}>
+            {userData.username}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Email
+          </Text>
+          <Text style={styles.profileText}>
+            {userData.email}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Balance
+          </Text>
+          <Text style={styles.profileText}>
+            ${userData.balance}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Amount Won
+          </Text>
+          <Text style={styles.profileText}>
+            ${userData.amountWon}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Amount Lost
+          </Text>
+          <Text style={styles.profileText}>
+            ${userData.amountLost}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Wins
+          </Text>
+          <Text style={styles.profileText}>
+            {userData.wins}
+          </Text>
+
+          <Text style={styles.profileLabel}>
+            Losses
+          </Text>
+          <Text style={styles.profileText}>
+            {userData.losses}
+          </Text>
         </View>
       ) : (
         <Text>Loading...</Text>
       )}
-  
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Logout</Text>
+
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>
+          Logout
+        </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
-  
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 20,
     paddingHorizontal: 20,
     backgroundColor: '#f9f9f9',
   },
@@ -121,7 +170,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,
-    marginBottom: 30,
+    marginBottom: 15,
   },
   profileLabel: {
     fontSize: 18,
@@ -140,6 +189,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 10,
     alignItems: 'center',
+    marginBottom: 30,
   },
   logoutButtonText: {
     fontSize: 16,
@@ -147,4 +197,3 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
