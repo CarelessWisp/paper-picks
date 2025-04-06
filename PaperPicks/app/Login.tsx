@@ -61,6 +61,10 @@ const Login = () => {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push('/signup')}>
+        <Text style={styles.linkText}>Create an Account</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -110,6 +114,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 10,
     textAlign: 'center',
+  },
+  linkText: {
+    color: '#4CAF50',
+    fontSize: 16,
+    marginTop: 10,
+    textDecorationLine: 'underline',
   },
 });
 

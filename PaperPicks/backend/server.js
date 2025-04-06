@@ -4,97 +4,122 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
 
-app.use(cors());
-
-app.use(express.json());
-
+// Mongoose setup
 const uri = 'mongodb+srv://alviny:yfOWNs3HAKK3wyPX@paperpicks.mgiml.mongodb.net/?retryWrites=true&w=majority&appName=PaperPicks';
-
-// Database name
 const dbName = 'PaperPicks';
 
-let db;
+// Connect to MongoDB using Mongoose
+mongoose.connect(uri, { dbName })
+  .then(() => console.log('Connected to MongoDB using Mongoose'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-async function connectDB() {
+app.use(cors());
+app.use(express.json());
+
+// Define the user schema with Mongoose
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true },
+  password: String,
+  email: { type: String, unique: true },  // Added email field
+  balance: { type: Number, default: 0 },
+  amountWon: { type: Number, default: 0 },
+  amountLost: { type: Number, default: 0 },
+  wins: { type: Number, default: 0 },
+  losses: { type: Number, default: 0 }
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Signup route using Mongoose
+app.post('/signup', async (req, res) => {
+    const { username, password } = req.body;
+  
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password required' });
+    }
+  
     try {
-        const client = new MongoClient(uri, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true,
-            }
-        });
-
-        await client.connect();
-        db = client.db(dbName);
-
-        console.log('Connected to MongoDB');
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(409).json({ message: 'Username already exists' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new User({
+        username,
+        password: hashedPassword, 
+      });
+  
+      await newUser.save();
+  
+      res.status(201).json({ message: 'User created' });
+    } catch (err) {
+      console.error('Signup error:', err);
+      res.status(500).json({ message: 'Server error' });
     }
-    catch (error) {
-        console.error('MongoDB connection error:', error);
-    }
-}
+  });
+  
 
+// Login route using Mongoose
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-
-        const usersCollection = db.collection('User');
-        const user = await usersCollection.findOne({ username });
+        const user = await User.findOne({ username });
 
         if (!user) {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
-        // Compare plain text passwords
-        if (password !== user.password) {
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
         return res.status(200).json({ message: 'Login successful' });
+
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
+// Profile route using Mongoose
 app.get('/userProfile', async (req, res) => {
+  const { username } = req.query;
 
-    const { username } = req.query;  // Get the username from query parameters
+  if (!username) {
+    return res.status(400).json({ message: 'Username is required' });
+  }
 
-    if (!username) {
-        return res.status(400).json({ message: 'Username is required' });
+  try {
+    // Find the user by username using Mongoose
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    try {
-        const usersCollection = db.collection('User');
-        const user = await usersCollection.findOne({ username });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Return the user's profile data
-        res.status(200).json({
-            username: user.username,
-            email: user.email,
-            balance: user.balance,
-            amountWon: user.amountWon,
-            amountLost: user.amountLost,
-            wins: user.wins,
-            losses: user.losses,
-        });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.status(200).json({
+      username: user.username,
+      email: user.email,
+      balance: user.balance,
+      amountWon: user.amountWon,
+      amountLost: user.amountLost,
+      wins: user.wins,
+      losses: user.losses,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 // Start the server
 const PORT = 5001;
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
