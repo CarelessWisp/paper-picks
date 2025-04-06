@@ -60,6 +60,37 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.get('/userProfile', async (req, res) => {
+
+    const { username } = req.query;  // Get the username from query parameters
+
+    if (!username) {
+        return res.status(400).json({ message: 'Username is required' });
+    }
+
+    try {
+        const usersCollection = db.collection('User');
+        const user = await usersCollection.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the user's profile data
+        res.status(200).json({
+            username: user.username,
+            email: user.email,
+            balance: user.balance,
+            amountWon: user.amountWon,
+            amountLost: user.amountLost,
+            wins: user.wins,
+            losses: user.losses,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Start the server
 const PORT = 5001;
 connectDB().then(() => {

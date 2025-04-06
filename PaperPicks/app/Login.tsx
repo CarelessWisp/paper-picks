@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -25,6 +26,7 @@ const Login = () => {
       if (response.status === 200) {
         // Save the JWT token, for example, to AsyncStorage
         console.log('Login successful:', data.token);
+        await AsyncStorage.setItem('username', username);
         router.push('/home');  // Navigate to the Home page
       } else {
         setError(data.message || 'Login failed');
