@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert, Platform } from 'react-native';
 
 // Define the type for the user data
 interface UserData {
@@ -63,6 +64,7 @@ export default function ProfileScreen() {
         );
       }
     };
+    
 
     fetchUserProfile(); // Fetch user profile when the component mounts
   }, []);
@@ -71,6 +73,58 @@ export default function ProfileScreen() {
     router.push('/'); // Navigate to the login page or home page
   };
 
+  const handleDeleteAccount = () => {
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(
+        'Are you sure you want to delete your account? This action cannot be undone.'
+      );
+  
+      if (confirmed) {
+        deleteAccount(); // call the actual deletion logic
+      }
+    } else {
+      Alert.alert(
+        'Confirm Deletion',
+        'Are you sure you want to delete your account? This action cannot be undone.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: () => deleteAccount(),
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+  
+  const deleteAccount = async () => {
+    try {
+      const username = await AsyncStorage.getItem('username');
+      console.log(username)
+      if (!username) {
+        console.error('Username not found.');
+        return;
+      }
+  
+      const response = await fetch(`http://localhost:5001/deleteAccount`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+  
+      if (response.ok) {
+        await AsyncStorage.clear();
+        router.replace('/');
+      } else {
+        console.error('Failed to delete account.');
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
+  };
+    
   return (
     <ScrollView
       contentContainerStyle={styles.container}>
@@ -139,6 +193,11 @@ export default function ProfileScreen() {
           Logout
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleDeleteAccount} style={styles.deleteButton}>
+        <Text style={styles.deleteText}>Delete Account</Text>
+      </TouchableOpacity>
+
     </ScrollView>
   );
 }
@@ -196,4 +255,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
   },
+  deleteButton: {
+    backgroundColor: '#ff4d4f',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  deleteText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },  
 });
