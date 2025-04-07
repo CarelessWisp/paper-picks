@@ -1,19 +1,36 @@
-import { StyleSheet } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { CreateBet } from '@/components/betting/CreateBet';
 
 // tab two page
 export default function BettingScreen() {
-  return (
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+
+  return isMobile ? (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Betting</Text>
+          <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          <CreateBet />
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
+  ) : (
     <View style={styles.container}>
       <Text style={styles.title}>Betting</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="app/(tabs)/betting.tsx" />
+      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      <CreateBet />
     </View>
   );
 }
@@ -25,6 +42,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
+    marginTop: 25,
     fontSize: 20,
     fontWeight: 'bold',
   },
