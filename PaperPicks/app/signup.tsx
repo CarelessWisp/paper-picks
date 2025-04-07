@@ -6,14 +6,16 @@ import { useRouter } from 'expo-router';
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const router = useRouter();
 
   const handleSignup = async () => {
     try {
+      console.log(email)
       const response = await fetch('http://localhost:5001/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, username, password }),
       });
 
       const data = await response.json();
@@ -33,6 +35,13 @@ const Signup = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create an Account</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+      />
 
       <TextInput
         style={styles.input}

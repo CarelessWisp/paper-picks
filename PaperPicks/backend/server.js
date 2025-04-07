@@ -33,21 +33,29 @@ const User = mongoose.model('User', userSchema);
 
 // Signup route using Mongoose
 app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, username, password } = req.body;
+    console.log(req)
   
     if (!username || !password) {
-      return res.status(400).json({ message: 'Username and password required' });
+      return res.status(400).json({ message: 'Email, Username and password required' });
     }
   
     try {
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         return res.status(409).json({ message: 'Username already exists' });
+      }      
+      
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return res.status(409).json({ message: 'Username already exists' });
       }
+
   
       const hashedPassword = await bcrypt.hash(password, 10);
   
       const newUser = new User({
+        email,
         username,
         password: hashedPassword, 
       });
