@@ -9,6 +9,7 @@ import {
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { CreateBet } from '@/components/betting/CreateBet';
+import { ScrollView } from 'react-native-gesture-handler';
 
 // tab two page
 export default function BettingScreen() {
@@ -27,11 +28,11 @@ export default function BettingScreen() {
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   ) : (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Betting</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <CreateBet />
-    </View>
+    </ScrollView>
   );
 }
 

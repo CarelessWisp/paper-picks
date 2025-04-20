@@ -1,8 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import RNPickerSelect from 'react-native-picker-select';
 import showAlert from '@/utils/showAlert';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import mongoose from 'mongoose';
+
+interface UserData {
+  userID: mongoose.Schema.Types.ObjectId;
+  username: string;
+  email: string;
+  balance: number;
+  amountWon: number;
+  amountLost: number;
+  wins: number;
+  losses: number;
+}
 
 export function CreateBet() {
   const [title, setTitle] = useState('');
@@ -10,23 +23,83 @@ export function CreateBet() {
   const [odds, setOdds] = useState('');
   const [type, setType] = useState('');
 
-  const handleCreateBet = () => {
+  const handleCreateBet = async () => {
     if (!title || !description || !odds || !type) {
       showAlert('Missing Fields', 'Please fill in all fields before submitting.');
       return;
     }
 
-    const betData = {
-      title,
-      description,
-      odds: parseFloat(odds),
-      type,
+    try {
+      const userID = userData?.userID;
+      if (!userID) {
+        showAlert('Error', 'User not found. Please log in again.');
+        return;
+      }
+
+      const betData = {
+        userID,
+        title,
+        description,
+        odds: parseFloat(odds),
+        type,
+      };
+
+      const response = await fetch('http://localhost:5001/createBet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(betData),
+      });
+
+      if (response.ok) {
+        showAlert('Success', 'Bet created successfully!');
+        setTitle('');
+        setDescription('');
+        setOdds('');
+        setType('');
+      } else {
+        const err = await response.json();
+        showAlert('Error', err.message || 'Something went wrong');
+      }
+    } catch (error) {
+      console.error('Create bet error:', error);
+      showAlert('Error', 'Network or server error occurred');
+    }
+  };
+
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const username = await AsyncStorage.getItem('username');
+
+        if (!username) {
+          console.error('Username not found');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:5001/userProfile?username=${username}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data: UserData = await response.json();
+          setUserData(data); // Store the fetched user data
+        } else {
+          console.error('Failed to fetch user profile');
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
     };
 
-    // You would send `betData` to your backend or Firestore/DB here
-    console.log('Creating bet:', betData);
-    Alert.alert('Bet created successfully!');
-  };
+    fetchUserProfile(); // Fetch user profile when the component mounts
+  }, []);
 
   return (
     <View style={styles.bettingContainer}>

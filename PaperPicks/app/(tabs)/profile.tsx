@@ -9,9 +9,11 @@ import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Platform } from 'react-native';
+import mongoose from 'mongoose';
 
 // Define the type for the user data
 interface UserData {
+  userID: mongoose.Schema.Types.ObjectId;
   username: string;
   email: string;
   balance: number;
