@@ -19,7 +19,7 @@ const BetSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   odds: { type: Number, required: true },
-  type: { type: String, enum: ["moneyline", "spread"], required: true },
+  type: { type: String, enum: ["moneyline", "spread", "prop"], required: true },
   outcome: { type: String, default: null },
 }, { collection: 'Bet' }); 
 

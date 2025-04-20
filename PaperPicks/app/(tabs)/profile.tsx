@@ -9,9 +9,11 @@ import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Platform } from 'react-native';
+import mongoose from 'mongoose';
 
 // Define the type for the user data
 interface UserData {
+  userID: mongoose.Schema.Types.ObjectId;
   username: string;
   email: string;
   balance: number;
@@ -64,7 +66,6 @@ export default function ProfileScreen() {
         );
       }
     };
-    
 
     fetchUserProfile(); // Fetch user profile when the component mounts
   }, []);
@@ -76,9 +77,9 @@ export default function ProfileScreen() {
   const handleDeleteAccount = () => {
     if (Platform.OS === 'web') {
       const confirmed = window.confirm(
-        'Are you sure you want to delete your account? This action cannot be undone.'
+        'Are you sure you want to delete your account? This action cannot be undone.',
       );
-  
+
       if (confirmed) {
         deleteAccount(); // call the actual deletion logic
       }
@@ -94,37 +95,48 @@ export default function ProfileScreen() {
             onPress: () => deleteAccount(),
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     }
   };
-  
+
   const deleteAccount = async () => {
     try {
-      const username = await AsyncStorage.getItem('username');
-      console.log(username)
+      const username =
+        await AsyncStorage.getItem('username');
+      console.log(username);
       if (!username) {
         console.error('Username not found.');
         return;
       }
-  
-      const response = await fetch(`http://localhost:5001/deleteAccount`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username }),
-      });
-  
+
+      const response = await fetch(
+        `http://localhost:5001/deleteAccount`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username }),
+        },
+      );
+
       if (response.ok) {
         await AsyncStorage.clear();
         router.replace('/');
       } else {
-        console.error('Failed to delete account.');
+        console.error(
+          'Failed to delete account.',
+        );
       }
     } catch (error) {
-      console.error('Error deleting account:', error);
+      console.error(
+        'Error deleting account:',
+        error,
+      );
     }
   };
-    
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}>
@@ -194,16 +206,19 @@ export default function ProfileScreen() {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleDeleteAccount} style={styles.deleteButton}>
-        <Text style={styles.deleteText}>Delete Account</Text>
+      <TouchableOpacity
+        onPress={handleDeleteAccount}
+        style={styles.deleteButton}>
+        <Text style={styles.deleteText}>
+          Delete Account
+        </Text>
       </TouchableOpacity>
-
     </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     paddingTop: 20,
     paddingHorizontal: 20,
@@ -248,7 +263,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 15,
   },
   logoutButtonText: {
     fontSize: 16,
@@ -259,11 +274,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff4d4f',
     padding: 12,
     borderRadius: 8,
-    marginTop: 20,
     alignItems: 'center',
+    marginBottom: 15,
   },
   deleteText: {
     color: '#fff',
     fontWeight: 'bold',
-  },  
+  },
 });
