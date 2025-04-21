@@ -44,7 +44,7 @@ export function CreateBet() {
         type,
       };
 
-      const response = await fetch('http://localhost:5001/createBet', {
+      const response = await fetch('http://localhost:5001/betting/createBet', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

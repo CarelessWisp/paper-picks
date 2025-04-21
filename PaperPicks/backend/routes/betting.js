@@ -4,7 +4,7 @@ const router = express.Router(); // your Bet model
 const { Bet } = require('../models');
 
 // Create Bet Route
-router.post('/betting/createBet', async (req, res) => {
+router.post('/createBet', async (req, res) => {
   const { userID, title, description, odds, type } = req.body;
 
   // Basic presence check

@@ -22,7 +22,7 @@ app.use(express.json());
 
 
 
-app.use('/api/betting', betRoutes);
+app.use('/betting', betRoutes);
 
 // Signup route using Mongoose
 app.post('/signup', async (req, res) => {
