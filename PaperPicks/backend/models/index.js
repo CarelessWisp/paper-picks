@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
   userID: { type: mongoose.Schema.Types.ObjectId, auto: true },
-  userType: { type: String, enum: ["admin", "bettor"], required: true },
+  userType: { type: String, enum: ["admin", "bettor"], required: true, default: "bettor"},
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true }, 
   email: { type: String, required: true, unique: true },

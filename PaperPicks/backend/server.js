@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const { User }= require('./models');
 const app = express();
 
 // Mongoose setup
@@ -17,19 +18,6 @@ mongoose.connect(uri, { dbName })
 app.use(cors());
 app.use(express.json());
 
-// Define the user schema with Mongoose
-const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  password: String,
-  email: { type: String, unique: true },  // Added email field
-  balance: { type: Number, default: 0 },
-  amountWon: { type: Number, default: 0 },
-  amountLost: { type: Number, default: 0 },
-  wins: { type: Number, default: 0 },
-  losses: { type: Number, default: 0 }
-});
-
-const User = mongoose.model('User', userSchema);
 
 // Signup route using Mongoose
 app.post('/signup', async (req, res) => {
