@@ -56,4 +56,91 @@ router.post('/createBet', async (req, res) => {
   }
 });
 
+// Get all bets
+router.get('/getBets', async (req, res) => {
+  try {
+    const bets = await Bet.find().sort({ _id: -1 });
+    res.status(200).json(bets);
+  } catch (error) {
+    console.error('Fetch bets error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// READ: Get all bets for a user
+router.get('/userBets/:userID', async (req, res) => {
+  const { userID } = req.params;
+
+  try {
+    const bets = await Bet.find({ userID });
+    res.status(200).json(bets);
+  } catch (error) {
+    console.error('Get user bets error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// READ: Get a specific bet by ID
+router.get('/:betID', async (req, res) => {
+  const { betID } = req.params;
+
+  try {
+    const bet = await Bet.findById(betID);
+    if (!bet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+    res.status(200).json(bet);
+  } catch (error) {
+    console.error('Get bet error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// UPDATE a bet (e.g., outcome or odds/title update)
+router.put('/update/:betID', async (req, res) => {
+  const { betID } = req.params;
+  const { title, description, odds, type, outcome } = req.body;
+
+  try {
+    const updatedBet = await Bet.findByIdAndUpdate(
+      betID,
+      {
+        ...(title && { title }),
+        ...(description && { description }),
+        ...(odds !== undefined && { odds }),
+        ...(type && { type }),
+        ...(outcome !== undefined && { outcome }),
+      },
+      { new: true },
+    );
+
+    if (!updatedBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+
+    res.status(200).json({ message: 'Bet updated', bet: updatedBet });
+  } catch (error) {
+    console.error('Update bet error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// DELETE a bet
+router.delete('/delete/:betID', async (req, res) => {
+  const { betID } = req.params;
+
+  try {
+    const deletedBet = await Bet.findByIdAndDelete(betID);
+
+    if (!deletedBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+
+    res.status(200).json({ message: 'Bet deleted successfully' });
+  } catch (error) {
+    console.error('Delete bet error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;
