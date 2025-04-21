@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const { User }= require('./models');
+const { User, Bet }= require('./models');
 const app = express();
 const betRoutes = require('./routes/betting.js');
 
@@ -189,5 +189,32 @@ app.get('/leaderboard', async (req, res) => {
   } catch (err) {
     console.error('Error fetching leaderboard:', err);
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+app.get('/history', async (req, res) => {
+  try {
+    const { username } = req.query;
+    if (!username) return res.status(400).json({ error: 'Username required' });
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const bets = await Bet.find({ userID: user._id })
+      .sort({ _id: -1 })
+
+    const history = bets.map((bet) => ({
+      betID: bet._id,
+      title: bet.title,
+      description: bet.description,
+      odds: bet.odds,
+      type: bet.type,
+      outcome: bet.outcome,
+    }));
+
+    res.json(history);
+  } catch (err) {
+    console.error('Error fetching bet history:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
