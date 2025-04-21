@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { User }= require('./models');
 const app = express();
+const betRoutes = require('./routes/betting.js');
 
 // Mongoose setup
 const uri = 'mongodb+srv://alviny:yfOWNs3HAKK3wyPX@paperpicks.mgiml.mongodb.net/?retryWrites=true&w=majority&appName=PaperPicks';
@@ -18,6 +19,16 @@ mongoose.connect(uri, { dbName })
 app.use(cors());
 app.use(express.json());
 
+
+// Connect to MongoDB using Mongoose
+mongoose.connect(uri, { dbName })
+  .then(() => console.log('Connected to MongoDB using Mongoose'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/betting', betRoutes);
 
 // Signup route using Mongoose
 app.post('/signup', async (req, res) => {
@@ -95,11 +106,12 @@ app.get('/userProfile', async (req, res) => {
     // Find the user by username using Mongoose
     const user = await User.findOne({ username });
 
-    if (!user) {
+    if (!user || !user._id) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     res.status(200).json({
+      userID: user._id,
       username: user.username,
       email: user.email,
       balance: user.balance,
