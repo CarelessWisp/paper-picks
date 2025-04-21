@@ -168,3 +168,26 @@ app.delete('/deleteAccount', async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+app.get('/leaderboard', async (req, res) => {
+  const { type = 'amountWon' } = req.query;
+
+  // Only allow sorting by certain numeric fields
+  const validTypes = ['amountWon', 'balance'];
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ message: 'Invalid leaderboard type. Choose "amountWon" or "balance".' });
+  }
+
+  try {
+    // Return top 10 players sorted by the chosen metric
+    const leaderboard = await User.find({ userType: 'bettor' })
+      .sort({ [type]: -1 })
+      .limit(10)
+      .select('username balance amountWon amountLost wins losses'); // choose which fields to return
+
+    res.status(200).json(leaderboard);
+  } catch (err) {
+    console.error('Error fetching leaderboard:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
