@@ -20,13 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 
-// Connect to MongoDB using Mongoose
-mongoose.connect(uri, { dbName })
-  .then(() => console.log('Connected to MongoDB using Mongoose'))
-  .catch(err => console.error('MongoDB connection error:', err));
 
-app.use(cors());
-app.use(express.json());
 
 app.use('/api/betting', betRoutes);
 
@@ -125,6 +119,28 @@ app.get('/userProfile', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+app.put('/updateProfile', async (req, res) => {
+  console.log('Received update request body:', req.body);
+  const { userID, ...updateFields } = req.body;
+
+  try {
+    const result = await User.updateOne( // Use the Mongoose User model
+      { userID },
+      { $set: updateFields }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ message: 'User not found or no changes made' });
+    }
+
+    res.status(200).json({ message: 'Profile updated' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // Start the server
 const PORT = 5001;
