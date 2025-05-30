@@ -12,7 +12,15 @@ cd PaperPicks
 ```
 
 # running locally
-Downlaod node.js then run this
+Downlaod node.js before
+
+Start Backend
+```
+cd backend
+node server.js
+```
+
+Start app (cd back out or new terminal in root)
 ```
 npx expo start
 ```
